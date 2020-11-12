@@ -1,0 +1,52 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Sat Mar 03 19:22:30 2018
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x00014e
+                   .cinit    romdata   0x0000a7    program   0x000004
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x0000a8      
+            169 out of 4230 program addresses used, program memory utilization is 3%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    Delay   0x00009f    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                   Delay2   0x0000a4    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                   Delay5   0x00009c    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                Key_Check   0x00006c    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                 Key_Init   0x000066    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                 LCD_Init   0x000028    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                  LCD_Ins   0x000048    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                 LCD_char   0x000054    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                     Main   0x000001    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                  Pulse_e   0x000061    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                        l   0x000023    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     Main   0x000001    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                        l   0x000023    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                 LCD_Init   0x000028    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                  LCD_Ins   0x000048    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                 LCD_char   0x000054    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                  Pulse_e   0x000061    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                 Key_Init   0x000066    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                Key_Check   0x00006c    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                   Delay5   0x00009c    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                    Delay   0x00009f    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+                   Delay2   0x0000a4    program     static C:\Users\Ghost\Desktop\Project\codes\LCD1.X\LCD2.asm
+
+

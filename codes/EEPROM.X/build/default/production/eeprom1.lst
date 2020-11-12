@@ -1,0 +1,706 @@
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 #include "p16f873.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Sep 19 2017
+                      00005 ;  MPASM PIC16F873 processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2017 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+Message[301]: MESSAGE: (Processor-header file mismatch.  Verify selected processor.)
+                      00501         LIST
+                      00002 
+                      00003     
+                      00004 
+Warning[207]: Found label after column 1. (c1)
+  00000020            00005  c1             equ     0x20        ; for delays
+Warning[207]: Found label after column 1. (c2)
+  00000021            00006  c2             equ     0x21        ; for delays
+Warning[207]: Found label after column 1. (LCDTemp)
+  00000022            00007  LCDTemp        equ     0x22        ; Yo keep LCD data tempararily
+Warning[207]: Found label after column 1. (LCDPORT)
+  00000006            00008  LCDPORT        equ     PORTB       
+Warning[207]: Found label after column 1. (LCDTRIS)
+  00000086            00009  LCDTRIS        equ     TRISB
+Warning[207]: Found label after column 1. (button_pressed)
+  00000025            00010  button_pressed equ     0x25        ; to store the pressed button
+Warning[207]: Found label after column 1. (KEYPORT)
+  00000007            00011  KEYPORT        equ     PORTC       
+Warning[207]: Found label after column 1. (KEYTRIS)
+  00000087            00012  KEYTRIS        equ     TRISC
+Warning[207]: Found label after column 1. (e1)
+  00000040            00013  e1             equ     0x40
+Warning[207]: Found label after column 1. (VALUE)
+  00000030            00014  VALUE          equ     0x30
+                      00015                 
+                      00016  
+                      00017 
+Warning[205]: Found directive in column 1. (org)
+                      00018 org 0x00
+Warning[203]: Found opcode in column 1. (goto)
+0000   2???           00019 goto Main
+                      00020    
+0001                  00021 Main:
+0001   2???           00022     call    LCD_Init
+0002   2???           00023     call    Key_Init
+                      00024     
+                      00025     
+0003   30C0           00026     movlw   b'11000000'     ;Goto 2nd row
+0004   2???           00027     call    LCD_Ins
+0005   300F           00028     movlw   b'00001111'     ; Turn on Display/Cursor
+0006   2???           00029     call    LCD_Ins
+                      00030     ;call    Delay
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00031     ;movlw   b'00000001'            ; Clear display
+                      00032     ;call    LCD_Ins
+0007   3040           00033     movlw   0x40
+0008   00C0           00034     movwf   e1
+                      00035    
+0009   3041           00036     movlw   'A'
+000A   2???           00037     call    Write_EEPROM
+000B   0AC0           00038     incf    e1,1
+000C   3042           00039     movlw   'B'
+000D   2???           00040     call    Write_EEPROM
+                      00041     
+                      00042     
+000E   3040           00043     movlw   0x40
+000F   00C0           00044     movwf   e1
+                      00045     
+0010   2???           00046     call    Read_EEPROM
+0011   2???           00047     call    LCD_char
+0012   0AC0           00048     incf    e1,1
+0013   2???           00049     call    Read_EEPROM
+0014   2???           00050     call    LCD_char
+                      00051     
+Warning[207]: Found label after column 1. (l)
+0015                  00052     l
+0015   2???           00053     call    Key_Check
+0016   0825           00054     movf    button_pressed,0
+0017   2???           00055     call    LCD_char
+0018   2???           00056     call    Delay5
+0019   2???           00057     goto l
+                      00058     
+                      00059     
+001A                  00060 Read_EEPROM:
+                      00061     
+001A   1703           00062     bsf         STATUS, 6           ;
+001B   1283           00063     bcf         STATUS, 5           ;Bank 2
+001C   0840           00064     movf        e1, 0               ;Write address
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001D   008D           00065     movwf       EEADR               ;to read from
+001E   1683           00066     bsf         STATUS, 5           ;Bank 3
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001F   138C           00067     bcf         EECON1, 7           ;Point to Data memory
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0020   140C           00068     bsf         EECON1, 0           ;Start read operation
+0021   1283           00069     bcf         STATUS, 5           ;Bank 2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0022   080C           00070     movf        EEDATA, 0           ;W = EEDATA
+0023   1303           00071     bcf         STATUS, 6           ;select bank 0
+0024   0008           00072     return
+                      00073 
+0025                  00074 Write_EEPROM:
+0025   00B0           00075     movwf       VALUE               ; move the value to register
+0026   1703           00076     bsf         STATUS, 6           ;
+                      00077     ;bsf                STATUS, 5           ;Bank 3
+                      00078     ;btfsc      EECON1, 1           ;Wait for
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00079     ;goto       $-1                 ;write to finish
+                      00080     ;bcf                STATUS, 5           ;Bank 2
+0027   0840           00081     movf        e1, 0               ;Address to
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0028   008D           00082     movwf       EEADR               ;write to
+0029   0830           00083     movf        VALUE, 0                    ;Data to
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002A   008C           00084     movwf       EEDATA              ;write
+002B   1683           00085     bsf         STATUS, 5           ;Bank 3
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002C   138C           00086     bcf         EECON1, 7           ;Point to Data memory
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002D   150C           00087     bsf         EECON1, 2           ;Enable writes
+                      00088                                     ;Only disable interrupts
+                      00089     ;bcf                INTCON, GIE         ;if already enabled,
+                      00090                                     ;otherwise discard
+002E   3055           00091     movlw       0x55                ;Write 55h to
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002F   008D           00092     movwf       EECON2              ;EECON2
+0030   30AA           00093     movlw        0xAA               ;Write AAh to
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0031   008D           00094     movwf       EECON2              ;EECON2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0032   148C           00095     bsf         EECON1, 1           ;Start write operation
+                      00096                                     ;Only enable interrupts
+                      00097     ;bsf                INTCON, GIE         ;if using interrupts,
+                      00098     ;otherwise discard
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0033   110C           00099     bcf         EECON1, 2           ;Disable writes
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0034   188C           00100     btfsc       EECON1, 1           ;Wait for write to finish
+0035   2???           00101     goto        $-1
+0036   1283           00102     bcf         STATUS,5            
+0037   1303           00103     bcf         STATUS,6            ;select bank 0
+                      00104     
+                      00105     
+0038   0008           00106     return
+                      00107     
+                      00108  ;LCD routines...........   
+0039                  00109 LCD_Init:                   ; initialize LED to 4 bit mode
+0039   1683           00110     bsf     STATUS, 5       ; select bank 1 
+003A   3000           00111     movlw   b'00000000'     ; LCDPORT Outputs
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003B   0086           00112     movwf   LCDTRIS         ; Change PortB to output
+003C   1283           00113     bcf     STATUS, 5       ; select bank 0
+003D   2???           00114     call    Delay5          ; Wait 15 msecs
+003E   2???           00115     call    Delay5          
+003F   2???           00116     call    Delay5          
+0040   3030           00117     movlw   b'00110000'     ; Send the Reset Instruction
+0041   0086           00118     movwf   LCDPORT         
+0042   2???           00119     call    Pulse_e         ; Pulse LCD_E
+0043   2???           00120     call    Delay5          ; Delay 5ms
+0044   2???           00121     call    Pulse_e         ; Pulse LCD_E
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0045   2???           00122     call    Delay2          ; Delay of 2ms
+0046   2???           00123     call    Pulse_e         ; Pulse LCD_E
+0047   2???           00124     call    Delay2          ; Delay of 2ms
+0048   3020           00125     movlw   0x020           ; Send the Data Length Specification
+0049   0086           00126     movwf   LCDPORT         
+004A   2???           00127     call    Pulse_e         ; Pulse LCD_E
+004B   2???           00128     call    Delay2          ; Delay of 2ms
+004C   3028           00129     movlw   b'00101000'     ; Set Interface Length
+004D   2???           00130     call    LCD_Ins         
+004E   3010           00131     movlw   b'00010000'     ; Turn Off Display
+004F   2???           00132     call    LCD_Ins         
+0050   3001           00133     movlw   b'00000001'     ; Clear Display RAM
+0051   2???           00134     call    LCD_Ins         
+0052   3006           00135     movlw   b'00000110'     ; Set Cursor Movement
+0053   2???           00136     call    LCD_Ins         
+0054   300C           00137     movlw   b'00001100'     ; Turn on Display/Cursor
+0055   2???           00138     call    LCD_Ins         
+0056   3001           00139     movlw   b'00000001'     ; Clear LCD
+0057   2???           00140     call    LCD_Ins         
+0058   0008           00141     return ;
+                      00142     
+0059                  00143 LCD_Ins:                    ;Send the Instruction to the LCD
+0059   00A2           00144     movwf   LCDTemp         ; Save the Value
+005A   39F0           00145     andlw   b'11110000'     ; High Nibble first
+005B   0086           00146     movwf   LCDPORT         
+005C   1106           00147     bcf     LCDPORT,2       
+005D   2???           00148     call    Pulse_e         
+005E   0E22           00149     swapf   LCDTemp, 0      ; Low Nibble Second
+005F   39F0           00150     andlw   b'11110000'     
+0060   0086           00151     movwf   LCDPORT         
+0061   1106           00152     bcf     LCDPORT,2       
+0062   2???           00153     call    Pulse_e         
+0063   2???           00154     call    Delay2          ; wait 2 ms
+                      00155     
+0064   0008           00156     return ;
+                      00157 
+0065                  00158 LCD_char:                   ; Send the Character to the LCD
+0065   00A2           00159     movwf   LCDTemp         ; Save the Value
+0066   39F0           00160     andlw   0xF0            ; High Nibble first
+0067   0086           00161     movwf   LCDPORT         
+0068   1506           00162     bsf     LCDPORT,2       
+0069   2???           00163     call    Pulse_e ;
+006A   0E22           00164     swapf   LCDTemp, 0      ; Low Nibble Second
+006B   39F0           00165     andlw   0xF0            
+006C   0086           00166     movwf   LCDPORT         
+006D   1506           00167     bsf     LCDPORT,2       
+006E   2???           00168     call    Pulse_e         
+006F   2???           00169     call    Delay2         
+0070   0000           00170     nop 
+0071   0008           00171     return 
+                      00172 
+0072                  00173 Pulse_e:                    ;LCD Enable pulse to write data from LCDPORT into LCD module.
+0072   1586           00174     bsf LCDPORT,3            
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0073   0000           00175     nop                      
+0074   1186           00176     bcf LCDPORT,3                    
+0075   0000           00177     nop                     
+0076   0008           00178     return      
+                      00179  
+                      00180 ;Keypad routines.............
+0077                  00181 Key_Init:                   ;   initalize keypad
+0077   1683           00182     bsf     STATUS,5        ;select bank 1
+0078   30F0           00183     movlw   b'11110000'     ;0-4 outputs,5-7 inputs.
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0079   0087           00184     movwf   KEYTRIS         
+007A   1283           00185     bcf     STATUS,5        ;select bank0
+007B   01A5           00186     clrf    button_pressed  ;clear the button
+007C   0008           00187     return
+                      00188     
+                      00189     
+007D                  00190 Key_Check:                              ;       check what button has been pressed
+007D   3058           00191     movlw   'X'
+007E   00A5           00192     movwf   button_pressed
+007F   1407           00193     bsf     KEYPORT, 0                  ;       scan the first column of keys           
+0080   1A07           00194     btfsc   KEYPORT, 4                  ;       
+0081   3037           00195     movlw   '7'                         ;       7 is pressed.
+0082   1A87           00196     btfsc   KEYPORT, 5                  ;       
+0083   3034           00197     movlw   '4'                         ;       4 is pressed.
+0084   1B07           00198     btfsc   KEYPORT, 6                  ;       
+0085   3031           00199     movlw   '1'                         ;       1 is pressed.
+0086   1B87           00200     btfsc   KEYPORT, 7                  ;       
+0087   302A           00201     movlw   '*'                         ;       * is pressed.
+0088   1007           00202     bcf     KEYPORT, 0                  ;       take first column low.
+                      00203 
+0089   1487           00204     bsf     KEYPORT, 1                  ;       scan the second column of keys
+008A   1A07           00205     btfsc   KEYPORT, 4                  ;       
+008B   3038           00206     movlw   '8'                         ;       8 is pressed.
+008C   1A87           00207     btfsc   KEYPORT, 5                  ;       
+008D   3035           00208     movlw   '5'                         ;       5 is pressed.
+008E   1B07           00209     btfsc   KEYPORT, 6                  ;       
+008F   3032           00210     movlw   '2'                         ;       2 is pressed.
+0090   1B87           00211     btfsc   KEYPORT, 7                  ;       
+0091   3030           00212     movlw   '0'                         ;       0 is pressed.
+0092   1087           00213     bcf     KEYPORT, 1                  ;       take second column low.
+                      00214 
+0093   1507           00215     bsf     KEYPORT, 2                  ;       scan the third column of keys 
+0094   1A07           00216     btfsc   KEYPORT, 4                  ;       
+0095   3039           00217     movlw   '9'                         ;       9 is pressed.
+0096   1A87           00218     btfsc   KEYPORT, 5                  ;       
+0097   3036           00219     movlw   '6'                         ;       6 is pressed.
+0098   1B07           00220     btfsc   KEYPORT, 6                  ;       
+0099   3033           00221     movlw   '3'                         ;       3 is pressed.
+009A   1B87           00222     btfsc   KEYPORT, 7                  ;       
+009B   3023           00223     movlw   '#'                         ;       1 is pressed.
+009C   1107           00224     bcf     KEYPORT, 2                  ;       take rhird column low.
+                      00225 
+009D   1587           00226     bsf     KEYPORT, 3                  ;       scan the last column of keys
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+009E   1A07           00227     btfsc   KEYPORT, 4                  ;       
+009F   3041           00228     movlw   'A'                         ;       A is pressed.
+00A0   1A87           00229     btfsc   KEYPORT, 5                  ;       
+00A1   3042           00230     movlw   'B'                         ;       B is pressed.
+00A2   1B07           00231     btfsc   KEYPORT, 6                  ;       
+00A3   3043           00232     movlw   'C'                         ;       C is pressed.
+00A4   1B87           00233     btfsc   KEYPORT, 7                  ;       
+00A5   3044           00234     movlw   'D'                         ;       D is pressed.
+00A6   1187           00235     bcf     KEYPORT, 3                  ;       take last column low.
+                      00236     
+00A7   00A5           00237     movwf   button_pressed
+00A8   3058           00238     movlw   'X'
+00A9   0225           00239     subwf   button_pressed,0
+00AA   1903           00240     btfsc   STATUS,Z
+00AB   2???           00241     goto    Key_Check
+                      00242                 ;       
+00AC   0008           00243     return                      
+                      00244     
+                      00245     
+                      00246     
+                      00247 ; Delay routines........
+00AD                  00248 Delay5:                         ;5ms
+00AD   3002           00249     movlw       d'2'
+00AE   00A0           00250     movwf       c1
+00AF   2???           00251     goto        Delay
+                      00252     
+00B0                  00253 Delay:                          ;0.7s
+00B0   0BA0           00254     decfsz      c1,1    
+00B1   2???           00255     goto        Delay
+00B2   0BA1           00256     decfsz      c2,1
+00B3   2???           00257     goto        Delay
+00B4   0008           00258     return
+00B5                  00259 Delay2:                         ;2ms
+00B5   0BA0           00260     decfsz      c1,1        
+00B6   2???           00261     goto        Delay2
+00B7   0008           00262     return
+                      00263  
+                      00264  end
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000006
+ADCS1                             00000007
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BRGH                              00000002
+C                                 00000000
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000015
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2                             0000001B
+CCPR2H                            0000001C
+CCPR2L                            0000001B
+CHS0                              00000003
+CHS1                              00000004
+CHS2                              00000005
+CKE                               00000006
+CKP                               00000004
+CREN                              00000004
+CSRC                              00000007
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+D_A                               00000005
+D_NOT_A                           00000005
+Delay                             000000B0
+Delay2                            000000B5
+Delay5                            000000AD
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GCEN                              00000007
+GIE                               00000007
+GO                                00000002
+GO_DONE                           00000002
+GO_NOT_DONE                       00000002
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+KEYPORT                           00000007
+KEYTRIS                           00000087
+Key_Check                         0000007D
+Key_Init                          00000077
+LCDPORT                           00000006
+LCDTRIS                           00000086
+LCDTemp                           00000022
+LCD_Init                          00000039
+LCD_Ins                           00000059
+LCD_char                          00000065
+Main                              00000001
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000002
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OERR                              00000001
+OPTION_REG                        00000081
+P                                 00000004
+PCFG0                             00000000
+PCFG1                             00000001
+PCFG2                             00000002
+PCFG3                             00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+Pulse_e                           00000072
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RC7                               00000007
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+READ_WRITE                        00000002
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RX9                               00000006
+RX9D                              00000000
+R_NOT_W                           00000002
+R_W                               00000002
+Read_EEPROM                       0000001A
+S                                 00000003
+SEN                               00000000
+SMP                               00000007
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRMT                              00000001
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+UA                                00000001
+VALUE                             00000030
+W                                 00000000
+WCOL                              00000007
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Write_EEPROM                      00000025
+Z                                 00000002
+_.org_0_0035                      00000035
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003EFF
+_CP_ALL                           00000FCF
+_CP_HALF                          00001FDF
+_CP_OFF                           00003FFF
+_CP_UPPER_256                     00002FEF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         000037FF
+_DEVID1                           00002006
+_FOSC_EXTRC                       00003FFF
+_FOSC_HS                          00003FFE
+_FOSC_LP                          00003FFC
+_FOSC_XT                          00003FFD
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_LP_OSC                           00003FFC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_WRT_ENABLE_OFF                   00003DFF
+_WRT_ENABLE_ON                    00003FFF
+_WRT_OFF                          00003DFF
+_WRT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F873A                         00000001
+button_pressed                    00000025
+c1                                00000020
+c2                                00000021
+e1                                00000040
+MPASM 5.76                       EEPROM1.ASM   4-14-2018  0:01:07         PAGE 13
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+l                                 00000015
+
+Errors   :     0
+Warnings :    13 reported,     0 suppressed
+Messages :    16 reported,     0 suppressed
+
+

@@ -1,0 +1,108 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Sat Apr 14 11:01:05 2018
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000320
+                   .cinit    romdata   0x000190    program   0x000004
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000191      
+            402 out of 4230 program addresses used, program memory utilization is 9%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                 Alarm_On   0x000085    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+            Attempts_Over   0x00006c    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+  Check_IncorrectAttempts   0x00004c    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+             Compare_Code   0x000050    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+    Compared_CorrectPword   0x000067    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+  Compared_IncorrectPword   0x000061    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                    Delay   0x000188    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                   Delay2   0x00018d    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                   Delay5   0x000185    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+           DoorAlarm_Init   0x000070    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+               Door_Close   0x00007f    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                Door_Open   0x00007a    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+           Door_OpenClose   0x000005    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                Get_Pword   0x000025    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                Key_Check   0x000155    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                 Key_Init   0x00014f    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                LCD_Enter   0x0000e4    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                 LCD_Init   0x0000a6    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                  LCD_Ins   0x0000c6    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                 LCD_char   0x0000d2    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                LCD_clear   0x0000e9    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                     Main   0x000001    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                     Msg1   0x0000f0    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                     Msg2   0x00010d    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                     Msg3   0x00012e    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                     Msg4   0x00013d    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+           Password_Check   0x000010    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                  Pulse_e   0x0000df    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+              Read_EEPROM   0x000087    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+            Show_UserCode   0x000043    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+              Store_Pword   0x000017    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+           Store_UserCode   0x000038    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+             Write_EEPROM   0x000092    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+             _.org_0_00A2   0x0000a2    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+         l1Door_OpenClose   0x000009    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+         l2Door_OpenClose   0x000005    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+            loopinCompare   0x000052    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+               loopinshow   0x000045    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+              loopinstore   0x00003a    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     Main   0x000001    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+           Door_OpenClose   0x000005    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+         l2Door_OpenClose   0x000005    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+         l1Door_OpenClose   0x000009    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+           Password_Check   0x000010    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+              Store_Pword   0x000017    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                Get_Pword   0x000025    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+           Store_UserCode   0x000038    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+              loopinstore   0x00003a    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+            Show_UserCode   0x000043    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+               loopinshow   0x000045    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+  Check_IncorrectAttempts   0x00004c    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+             Compare_Code   0x000050    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+            loopinCompare   0x000052    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+  Compared_IncorrectPword   0x000061    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+    Compared_CorrectPword   0x000067    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+            Attempts_Over   0x00006c    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+           DoorAlarm_Init   0x000070    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                Door_Open   0x00007a    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+               Door_Close   0x00007f    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                 Alarm_On   0x000085    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+              Read_EEPROM   0x000087    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+             Write_EEPROM   0x000092    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+             _.org_0_00A2   0x0000a2    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                 LCD_Init   0x0000a6    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                  LCD_Ins   0x0000c6    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                 LCD_char   0x0000d2    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                  Pulse_e   0x0000df    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                LCD_Enter   0x0000e4    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                LCD_clear   0x0000e9    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                     Msg1   0x0000f0    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                     Msg2   0x00010d    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                     Msg3   0x00012e    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                     Msg4   0x00013d    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                 Key_Init   0x00014f    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                Key_Check   0x000155    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                   Delay5   0x000185    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                    Delay   0x000188    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+                   Delay2   0x00018d    program     static C:\Users\Ghost\Desktop\Project\codes\Door_Control.X\Control_door1.asm
+
+

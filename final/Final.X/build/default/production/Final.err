@@ -1,0 +1,72 @@
+Message[301] F:\MICROCHIP\MPLABX\V4.05\MPASMX\P16F873.INC 34 : MESSAGE: (Processor-header file mismatch.  Verify selected processor.)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 9 : Found label after column 1. (LCDPORT)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 10 : Found label after column 1. (LCDTRIS)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 11 : Found label after column 1. (KEYPORTC)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 12 : Found label after column 1. (KEYTRISC)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 13 : Found label after column 1. (KEYPORTA)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 14 : Found label after column 1. (KEYTRISA)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 16 : Found label after column 1. (PwordTemp)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 17 : Found label after column 1. (PwordCheck)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 18 : Found label after column 1. (Pword1)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 19 : Found label after column 1. (Usercode)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 21 : Found label after column 1. (LCDTemp)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 22 : Found label after column 1. (button_pressed)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 24 : Found label after column 1. (c1)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 25 : Found label after column 1. (c2)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 27 : Found label after column 1. (eeval)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 28 : Found label after column 1. (eead)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 30 : Found label after column 1. (statusreg)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 32 : Found label after column 1. (tmrctr)
+Warning[205] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 38 : Found directive in column 1. (org)
+Warning[203] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 39 : Found opcode in column 1. (goto)
+Warning[205] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 41 : Found directive in column 1. (org)
+Warning[203] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 42 : Found opcode in column 1. (goto)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 76 : Found label after column 1. (ISR)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 81 : Found label after column 1. (ISR_Time)
+Message[305] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 82 : Using default destination of 1 (file).
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 86 : Found label after column 1. (ISR1)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 90 : Found label after column 1. (ISRsleep)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 108 : Found label after column 1. (closedoor)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 183 : Found label after column 1. (Store_UserCode)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 188 : Found label after column 1. (loopinstore)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 204 : Found label after column 1. (loopinCompare)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 222 : Found label after column 1. (Compared_IncorrectPword)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 231 : Found label after column 1. (Compared_CorrectPword)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 244 : Found label after column 1. (Attempts_Over)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 253 : Found label after column 1. (Reset_P)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 259 : Found label after column 1. (reset1)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 272 : Found label after column 1. (Store_UserCodetoEEPROM)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 298 : Found label after column 1. (Store_Pword)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 319 : Found label after column 1. (Check_PwordChange)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 331 : Found label after column 1. (DoorAlarm_Init)
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 335 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 336 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 337 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 341 : Found label after column 1. (Door_Open)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 353 : Found label after column 1. (Door_Close)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 374 : Found label after column 1. (Alarm_On)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 382 : Found label after column 1. (Tmr1_Init)
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 385 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 393 : Found label after column 1. (Tmr1_On)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 403 : Found label after column 1. (Read_EEPROM)
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 408 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 410 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 411 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 413 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 422 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 424 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 426 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 427 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 432 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 434 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 435 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 439 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 440 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 454 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 550 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 552 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 554 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 647 : Found label after column 1. (Msg0)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 708 : Found label after column 1. (Msg2)
+Warning[207] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 743 : Found label after column 1. (Msg3)
+Warning[205] C:\USERS\GHOST\DESKTOP\PROJECT\FINAL.X\FINAL.ASM 936 : Found directive in column 1. (end)

@@ -1,0 +1,58 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Sat Apr 14 00:01:08 2018
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000170
+                   .cinit    romdata   0x0000b8    program   0x000004
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x0000b9      
+            186 out of 4230 program addresses used, program memory utilization is 4%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    Delay   0x0000b0    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                   Delay2   0x0000b5    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                   Delay5   0x0000ad    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                Key_Check   0x00007d    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                 Key_Init   0x000077    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                 LCD_Init   0x000039    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                  LCD_Ins   0x000059    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                 LCD_char   0x000065    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                     Main   0x000001    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                  Pulse_e   0x000072    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+              Read_EEPROM   0x00001a    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+             Write_EEPROM   0x000025    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+             _.org_0_0035   0x000035    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                        l   0x000015    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     Main   0x000001    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                        l   0x000015    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+              Read_EEPROM   0x00001a    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+             Write_EEPROM   0x000025    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+             _.org_0_0035   0x000035    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                 LCD_Init   0x000039    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                  LCD_Ins   0x000059    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                 LCD_char   0x000065    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                  Pulse_e   0x000072    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                 Key_Init   0x000077    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                Key_Check   0x00007d    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                   Delay5   0x0000ad    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                    Delay   0x0000b0    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+                   Delay2   0x0000b5    program     static C:\Users\Ghost\Desktop\Project\codes\EEPROM.X\eeprom1.asm
+
+

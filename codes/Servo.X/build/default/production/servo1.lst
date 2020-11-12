@@ -1,0 +1,679 @@
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 #include "p16f873.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Sep 19 2017
+                      00005 ;  MPASM PIC16F873 processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2017 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+Message[301]: MESSAGE: (Processor-header file mismatch.  Verify selected processor.)
+                      00501         LIST
+                      00002 
+                      00003     
+                      00004 
+Warning[207]: Found label after column 1. (c1)
+  00000020            00005  c1             equ     0x20        ; for delays
+Warning[207]: Found label after column 1. (c2)
+  00000021            00006  c2             equ     0x21        ; for delays
+Warning[207]: Found label after column 1. (LCDTemp)
+  00000022            00007  LCDTemp        equ     0x22        ; Yo keep LCD data tempararily
+Warning[207]: Found label after column 1. (LCDPORT)
+  00000006            00008  LCDPORT        equ     PORTB       
+Warning[207]: Found label after column 1. (LCDTRIS)
+  00000086            00009  LCDTRIS        equ     TRISB
+Warning[207]: Found label after column 1. (button_pressed)
+  00000025            00010  button_pressed equ     0x25        ; to store the pressed button
+Warning[207]: Found label after column 1. (KEYPORTC)
+  00000007            00011  KEYPORTC       equ     PORTC       
+Warning[207]: Found label after column 1. (KEYTRISC)
+  00000087            00012  KEYTRISC       equ     TRISC
+Warning[207]: Found label after column 1. (KEYPORTA)
+  00000005            00013  KEYPORTA       equ     PORTA       
+Warning[207]: Found label after column 1. (KEYTRISA)
+  00000085            00014  KEYTRISA       equ     TRISA
+                      00015  
+                      00016 
+Warning[205]: Found directive in column 1. (org)
+                      00017 org 0x00
+Warning[203]: Found opcode in column 1. (goto)
+0000   2???           00018 goto Main
+                      00019    
+0001                  00020 Main:
+0001   2???           00021     call    LCD_Init
+0002   2???           00022     call    Key_Init
+                      00023     
+0003   3045           00024     movlw   'E'
+0004   2???           00025     call    LCD_char
+0005   304E           00026     movlw   'N'
+0006   2???           00027     call    LCD_char
+0007   3054           00028     movlw   'T'
+0008   2???           00029     call    LCD_char
+0009   3045           00030     movlw   'E'
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000A   2???           00031     call    LCD_char
+000B   3052           00032     movlw   'R'
+000C   2???           00033     call    LCD_char
+000D   3020           00034     movlw   ' '
+000E   2???           00035     call    LCD_char
+000F   3050           00036     movlw   'P'
+0010   2???           00037     call    LCD_char
+0011   3041           00038     movlw   'A'
+0012   2???           00039     call    LCD_char
+0013   3053           00040     movlw   'S'
+0014   2???           00041     call    LCD_char
+0015   3053           00042     movlw   'S'
+0016   2???           00043     call    LCD_char
+0017   3057           00044     movlw   'W'
+0018   2???           00045     call    LCD_char
+0019   304F           00046     movlw   'O'
+001A   2???           00047     call    LCD_char
+001B   3052           00048     movlw   'R'
+001C   2???           00049     call    LCD_char
+001D   3044           00050     movlw   'D'
+001E   2???           00051     call    LCD_char
+001F   30C0           00052     movlw   b'11000000'     ;Goto 2nd row
+0020   2???           00053     call    LCD_Ins
+0021   300F           00054     movlw   b'00001111'     ; Turn on Display/Cursor
+0022   2???           00055     call    LCD_Ins
+                      00056     ;call    Delay
+                      00057     ;movlw   b'00000001'            ; Clear display
+                      00058     ;call    LCD_Ins
+                      00059     
+0023   1683           00060     bsf     STATUS,5
+0024   30FF           00061     movlw   d'255'
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0025   0092           00062     movwf   PR2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0026   1107           00063     bcf     TRISC,2
+0027   1283           00064     bcf     STATUS,5
+0028   300B           00065     movlw   b'00001011'
+0029   0095           00066     movwf   CCPR1L
+002A   302C           00067     movlw   b'00101100'
+002B   0097           00068     movwf   CCP1CON
+002C   3006           00069     movlw   b'00000110'
+002D   0092           00070     movwf   T2CON
+Warning[207]: Found label after column 1. (l)
+002E                  00071     l
+002E   2???           00072     call    Key_Check
+002F   0825           00073     movf    button_pressed,0
+0030   2???           00074     call    LCD_char
+0031   2???           00075     call    Delay5
+0032   2???           00076     goto l
+                      00077     
+                      00078     
+                      00079     
+                      00080     
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00081  ;LCD routines...........   
+0033                  00082 LCD_Init:                   ; initialize LED to 4 bit mode
+0033   1683           00083     bsf     STATUS, 5       ; select bank 1 
+0034   3000           00084     movlw   b'00000000'     ; LCDPORT Outputs
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0035   0086           00085     movwf   LCDTRIS         ; Change PortB to output
+0036   1283           00086     bcf     STATUS, 5       ; select bank 0
+0037   2???           00087     call    Delay5          ; Wait 15 msecs
+0038   2???           00088     call    Delay5          
+0039   2???           00089     call    Delay5          
+003A   3030           00090     movlw   b'00110000'     ; Send the Reset Instruction
+003B   0086           00091     movwf   LCDPORT         
+003C   2???           00092     call    Pulse_e         ; Pulse LCD_E
+003D   2???           00093     call    Delay5          ; Delay 5ms
+003E   2???           00094     call    Pulse_e         ; Pulse LCD_E
+003F   2???           00095     call    Delay2          ; Delay of 2ms
+0040   2???           00096     call    Pulse_e         ; Pulse LCD_E
+0041   2???           00097     call    Delay2          ; Delay of 2ms
+0042   3020           00098     movlw   0x020           ; Send the Data Length Specification
+0043   0086           00099     movwf   LCDPORT         
+0044   2???           00100     call    Pulse_e         ; Pulse LCD_E
+0045   2???           00101     call    Delay2          ; Delay of 2ms
+0046   3028           00102     movlw   b'00101000'     ; Set Interface Length
+0047   2???           00103     call    LCD_Ins         
+0048   3010           00104     movlw   b'00010000'     ; Turn Off Display
+0049   2???           00105     call    LCD_Ins         
+004A   3001           00106     movlw   b'00000001'     ; Clear Display RAM
+004B   2???           00107     call    LCD_Ins         
+004C   3006           00108     movlw   b'00000110'     ; Set Cursor Movement
+004D   2???           00109     call    LCD_Ins         
+004E   300C           00110     movlw   b'00001100'     ; Turn on Display/Cursor
+004F   2???           00111     call    LCD_Ins         
+0050   3001           00112     movlw   b'00000001'     ; Clear LCD
+0051   2???           00113     call    LCD_Ins         
+0052   0008           00114     return ;
+                      00115     
+0053                  00116 LCD_Ins:                    ;Send the Instruction to the LCD
+0053   00A2           00117     movwf   LCDTemp         ; Save the Value
+0054   39F0           00118     andlw   b'11110000'     ; High Nibble first
+0055   0086           00119     movwf   LCDPORT         
+0056   1106           00120     bcf     LCDPORT,2       
+0057   2???           00121     call    Pulse_e         
+0058   0E22           00122     swapf   LCDTemp, 0      ; Low Nibble Second
+0059   39F0           00123     andlw   b'11110000'     
+005A   0086           00124     movwf   LCDPORT         
+005B   1106           00125     bcf     LCDPORT,2       
+005C   2???           00126     call    Pulse_e         
+005D   2???           00127     call    Delay2          ; wait 2 ms
+                      00128     
+005E   0008           00129     return ;
+                      00130 
+005F                  00131 LCD_char:                   ; Send the Character to the LCD
+005F   00A2           00132     movwf   LCDTemp         ; Save the Value
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0060   39F0           00133     andlw   0xF0            ; High Nibble first
+0061   0086           00134     movwf   LCDPORT         
+0062   1506           00135     bsf     LCDPORT,2       
+0063   2???           00136     call    Pulse_e ;
+0064   0E22           00137     swapf   LCDTemp, 0      ; Low Nibble Second
+0065   39F0           00138     andlw   0xF0            
+0066   0086           00139     movwf   LCDPORT         
+0067   1506           00140     bsf     LCDPORT,2       
+0068   2???           00141     call    Pulse_e         
+0069   2???           00142     call    Delay2         
+006A   0000           00143     nop 
+006B   0008           00144     return 
+                      00145 
+006C                  00146 Pulse_e:                    ;LCD Enable pulse to write data from LCDPORT into LCD module.
+006C   1586           00147     bsf LCDPORT,3            
+006D   0000           00148     nop                      
+006E   1186           00149     bcf LCDPORT,3                    
+006F   0000           00150     nop                     
+0070   0008           00151     return      
+                      00152  
+                      00153 ;Keypad routines.............
+0071                  00154 Key_Init:                   ;   initalize keypad
+0071   1683           00155     bsf     STATUS,5        ;select bank 1
+0072   30F0           00156     movlw   b'11110000'     ;0-4 outputs,5-7 inputs.
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0073   0087           00157     movwf   KEYTRISC        
+0074   1283           00158     bcf     STATUS,5        ;select bank0
+                      00159        
+                      00160     
+0075   0185           00161     clrf    KEYPORTA        ; clear the port
+0076   0187           00162     clrf    KEYPORTC        ; clear the port
+0077   1683           00163     bsf     STATUS,5        ;select bank 1
+0078   3006           00164     movlw   0x06
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0079   009F           00165     movwf   ADCON1          ;configure all pins as digital inputs
+007A   3000           00166     movlw   b'00000000'     ; make portA output  
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+007B   0085           00167     movwf   KEYTRISA
+007C   1283           00168     bcf     STATUS,5        ;select bank 0
+                      00169     
+007D   01A5           00170     clrf    button_pressed  ;clear the button
+                      00171     
+007E   0008           00172     return
+                      00173     
+                      00174     
+007F                  00175 Key_Check:                              ;       check what button has been pressed
+007F   3058           00176     movlw   'X'
+0080   00A5           00177     movwf   button_pressed
+0081   1405           00178     bsf     KEYPORTA, 0                 ;       scan the first column of keys           
+0082   1A07           00179     btfsc   KEYPORTC, 4                 ;       
+0083   3037           00180     movlw   '7'                         ;       7 is pressed.
+0084   1A87           00181     btfsc   KEYPORTC, 5                 ;       
+0085   3034           00182     movlw   '4'                         ;       4 is pressed.
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0086   1B07           00183     btfsc   KEYPORTC, 6                 ;       
+0087   3031           00184     movlw   '1'                         ;       1 is pressed.
+0088   1B87           00185     btfsc   KEYPORTC, 7                 ;       
+0089   302A           00186     movlw   '*'                         ;       * is pressed.
+008A   1005           00187     bcf     KEYPORTA, 0                 ;       take first column low.
+                      00188 
+008B   1485           00189     bsf     KEYPORTA, 1                 ;       scan the second column of keys
+008C   1A07           00190     btfsc   KEYPORTC, 4                 ;       
+008D   3038           00191     movlw   '8'                         ;       8 is pressed.
+008E   1A87           00192     btfsc   KEYPORTC, 5                 ;       
+008F   3035           00193     movlw   '5'                         ;       5 is pressed.
+0090   1B07           00194     btfsc   KEYPORTC, 6                 ;       
+0091   3032           00195     movlw   '2'                         ;       2 is pressed.
+0092   1B87           00196     btfsc   KEYPORTC, 7                 ;       
+0093   3030           00197     movlw   '0'                         ;       0 is pressed.
+0094   1085           00198     bcf     KEYPORTA, 1                 ;       take second column low.
+                      00199 
+0095   1505           00200     bsf     KEYPORTA, 2                 ;       scan the third column of keys 
+0096   1A07           00201     btfsc   KEYPORTC, 4                 ;       
+0097   3039           00202     movlw   '9'                         ;       9 is pressed.
+0098   1A87           00203     btfsc   KEYPORTC, 5                 ;       
+0099   3036           00204     movlw   '6'                         ;       6 is pressed.
+009A   1B07           00205     btfsc   KEYPORTC, 6                 ;       
+009B   3033           00206     movlw   '3'                         ;       3 is pressed.
+009C   1B87           00207     btfsc   KEYPORTC, 7                 ;       
+009D   3023           00208     movlw   '#'                         ;       1 is pressed.
+009E   1105           00209     bcf     KEYPORTA, 2                 ;       take rhird column low.
+                      00210 
+009F   1585           00211     bsf     KEYPORTA, 3                 ;       scan the last column of keys
+00A0   1A07           00212     btfsc   KEYPORTC, 4                 ;       
+00A1   3041           00213     movlw   'A'                         ;       A is pressed.
+00A2   1A87           00214     btfsc   KEYPORTC, 5                 ;       
+00A3   3042           00215     movlw   'B'                         ;       B is pressed.
+00A4   1B07           00216     btfsc   KEYPORTC, 6                 ;       
+00A5   3043           00217     movlw   'C'                         ;       C is pressed.
+00A6   1B87           00218     btfsc   KEYPORTC, 7                 ;       
+00A7   3044           00219     movlw   'D'                         ;       D is pressed.
+00A8   1185           00220     bcf     KEYPORTA, 3                 ;       take last column low.
+                      00221     
+00A9   00A5           00222     movwf   button_pressed
+00AA   3058           00223     movlw   'X'
+00AB   0225           00224     subwf   button_pressed,0
+00AC   1903           00225     btfsc   STATUS,Z
+00AD   2???           00226     goto    Key_Check
+                      00227                 ;       
+00AE   0008           00228     return                      
+                      00229     
+                      00230     
+                      00231     
+                      00232 ; Delay routines........
+00AF                  00233 Delay5:                         ;5ms
+00AF   3002           00234     movlw       d'2'
+00B0   00A0           00235     movwf       c1
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00B1   2???           00236     goto        Delay
+                      00237     
+00B2                  00238 Delay:                          ;0.7s
+00B2   0BA0           00239     decfsz      c1,1    
+00B3   2???           00240     goto        Delay
+00B4   0BA1           00241     decfsz      c2,1
+00B5   2???           00242     goto        Delay
+00B6   0008           00243     return
+00B7                  00244 Delay2:                         ;2ms
+00B7   0BA0           00245     decfsz      c1,1        
+00B8   2???           00246     goto        Delay2
+00B9   0008           00247     return
+                      00248  
+                      00249  end
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000006
+ADCS1                             00000007
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BRGH                              00000002
+C                                 00000000
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000015
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2                             0000001B
+CCPR2H                            0000001C
+CCPR2L                            0000001B
+CHS0                              00000003
+CHS1                              00000004
+CHS2                              00000005
+CKE                               00000006
+CKP                               00000004
+CREN                              00000004
+CSRC                              00000007
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+D_A                               00000005
+D_NOT_A                           00000005
+Delay                             000000B2
+Delay2                            000000B7
+Delay5                            000000AF
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GCEN                              00000007
+GIE                               00000007
+GO                                00000002
+GO_DONE                           00000002
+GO_NOT_DONE                       00000002
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+KEYPORTA                          00000005
+KEYPORTC                          00000007
+KEYTRISA                          00000085
+KEYTRISC                          00000087
+Key_Check                         0000007F
+Key_Init                          00000071
+LCDPORT                           00000006
+LCDTRIS                           00000086
+LCDTemp                           00000022
+LCD_Init                          00000033
+LCD_Ins                           00000053
+LCD_char                          0000005F
+Main                              00000001
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000002
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OERR                              00000001
+OPTION_REG                        00000081
+P                                 00000004
+PCFG0                             00000000
+PCFG1                             00000001
+PCFG2                             00000002
+PCFG3                             00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+Pulse_e                           0000006C
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+RC4                               00000004
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+READ_WRITE                        00000002
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RX9                               00000006
+RX9D                              00000000
+R_NOT_W                           00000002
+R_W                               00000002
+S                                 00000003
+SEN                               00000000
+SMP                               00000007
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T2CON                             00000012
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRMT                              00000001
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TXSTA                             00000098
+UA                                00000001
+W                                 00000000
+WCOL                              00000007
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003EFF
+_CP_ALL                           00000FCF
+_CP_HALF                          00001FDF
+_CP_OFF                           00003FFF
+_CP_UPPER_256                     00002FEF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         000037FF
+_DEVID1                           00002006
+_FOSC_EXTRC                       00003FFF
+_FOSC_HS                          00003FFE
+_FOSC_LP                          00003FFC
+_FOSC_XT                          00003FFD
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_LP_OSC                           00003FFC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_WRT_ENABLE_OFF                   00003DFF
+_WRT_ENABLE_ON                    00003FFF
+_WRT_OFF                          00003DFF
+_WRT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F873A                         00000001
+button_pressed                    00000025
+c1                                00000020
+c2                                00000021
+l                                 0000002E
+
+MPASM 5.76                        SERVO1.ASM   4-24-2018  14:12:44         PAGE 13
+
+
+
+
+
+Errors   :     0
+Warnings :    13 reported,     0 suppressed
+Messages :     7 reported,     0 suppressed
+
+

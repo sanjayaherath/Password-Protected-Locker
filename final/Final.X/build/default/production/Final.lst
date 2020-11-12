@@ -1,0 +1,1561 @@
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002 
+                      00003 
+                      00004 #include "p16f873.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Sep 19 2017
+                      00005 ;  MPASM PIC16F873 processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2017 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+Message[301]: MESSAGE: (Processor-header file mismatch.  Verify selected processor.)
+                      00501         LIST
+                      00005 
+                      00006     
+                      00007 ;Variables
+                      00008 ;ports
+Warning[207]: Found label after column 1. (LCDPORT)
+  00000006            00009     LCDPORT     equ     PORTB       ; lcd port
+Warning[207]: Found label after column 1. (LCDTRIS)
+  00000086            00010     LCDTRIS     equ     TRISB
+Warning[207]: Found label after column 1. (KEYPORTC)
+  00000007            00011     KEYPORTC    equ     PORTC       ; keypad,motor,alarm port(INPUTS)
+Warning[207]: Found label after column 1. (KEYTRISC)
+  00000087            00012     KEYTRISC    equ     TRISC
+Warning[207]: Found label after column 1. (KEYPORTA)
+  00000005            00013     KEYPORTA    equ     PORTA       ; keypad port(OUTPUTS)
+Warning[207]: Found label after column 1. (KEYTRISA)
+  00000085            00014     KEYTRISA    equ     TRISA
+                      00015 ;password check
+Warning[207]: Found label after column 1. (PwordTemp)
+  00000026            00016     PwordTemp   equ     0x26        ; to store each character at comparision
+Warning[207]: Found label after column 1. (PwordCheck)
+  00000027            00017     PwordCheck  equ     0x27        ; to check number of loops in Password_check
+Warning[207]: Found label after column 1. (Pword1)
+  00000030            00018     Pword1      equ     0x30        ; password is retrieved to 0x30 to 0x33
+Warning[207]: Found label after column 1. (Usercode)
+  00000040            00019     Usercode    equ     0x40        ; users code is stored temporarily at 0x40 to 0x43
+                      00020 ;LCD and Keypad
+Warning[207]: Found label after column 1. (LCDTemp)
+  00000022            00021     LCDTemp     equ     0x22        ; Yo keep LCD data tempararily
+Warning[207]: Found label after column 1. (button_pressed)
+  00000025            00022     button_pressed equ  0x25        ; to store the pressed button
+                      00023 ;delays
+Warning[207]: Found label after column 1. (c1)
+  00000020            00024     c1          equ     0x20        ; for delays
+Warning[207]: Found label after column 1. (c2)
+  00000021            00025     c2          equ     0x21        ; for delays
+                      00026 ;eeprom
+Warning[207]: Found label after column 1. (eeval)
+  00000050            00027     eeval       equ     0x50        ; temp store eeprom write data
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[207]: Found label after column 1. (eead)
+  00000051            00028     eead        equ     0x51        ; store the address of eeprom
+                      00029 ;program status register            ; check whether status bits are set/reset 
+Warning[207]: Found label after column 1. (statusreg)
+  00000028            00030     statusreg   equ     0x28        ; 0 -to check whether program in reset mode
+                      00031 ;interrupt      
+Warning[207]: Found label after column 1. (tmrctr)
+  00000052            00032      tmrctr     equ     0x52        ; count number of timer1 interrupts to go to sleep
+                      00033  
+                      00034 
+                      00035  
+                      00036 ;Program
+                      00037 
+Warning[205]: Found directive in column 1. (org)
+                      00038 org 0x00
+Warning[203]: Found opcode in column 1. (goto)
+0000   2???           00039 goto Main
+                      00040         
+Warning[205]: Found directive in column 1. (org)
+                      00041 org 0x04
+Warning[203]: Found opcode in column 1. (goto)
+0004   2???           00042 goto ISR
+                      00043    
+0005                  00044 Main:
+                      00045                 
+0005   2???           00046     call        Key_Init            ; Keypad Initialization
+0006   2???           00047     call        LCD_Init            ; LCD initilaization
+0007   2???           00048     call        DoorAlarm_Init      ; motor and alarm intialization
+0008   2???           00049     call        Check_PwordChange   ; check whether passwordis changed by the user
+0009   2???           00050     call        Tmr1_Init           ; timer 1 initialization
+                      00051     ;bsf                PORTC,0             ; on backlight
+                      00052     
+000A                  00053 Menu_Select:                        ; select one option from available menu
+000A   2???           00054     call        LCD_clear
+000B   2???           00055     call        Msg0                ;'Welcome'
+                      00056     
+000C   2???           00057     call         Key_Check
+                      00058     
+000D   3041           00059     movlw       'A'                 ;Door open and close
+000E   0225           00060     subwf       button_pressed,0        
+000F   1903           00061     btfsc       STATUS,Z                
+0010   2???           00062     call        Door_OpenClose
+                      00063     
+0011   3042           00064     movlw       'B'                 ;reset password
+0012   0225           00065     subwf       button_pressed,0        
+0013   1903           00066     btfsc       STATUS,Z                
+0014   2???           00067     call        Pword_Reset
+                      00068     
+0015   3043           00069     movlw       'C'                 ;reset password
+0016   0225           00070     subwf       button_pressed,0        
+0017   1903           00071     btfsc       STATUS,Z
+0018   2???           00072     call        About
+                      00073     
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0019   2???           00074     goto        Menu_Select
+                      00075     
+Warning[207]: Found label after column 1. (ISR)
+001A                  00076  ISR:                               ; Interrupt service routine
+001A   180C           00077     btfsc       PIR1,0              ;check whether interrupt from timer1 overflow
+001B   2???           00078     goto        ISR_Time
+001C   0009           00079     retfie
+                      00080     
+Warning[207]: Found label after column 1. (ISR_Time)
+001D                  00081  ISR_Time:                          ; ISR for timer overflow   
+Message[305]: Using default destination of 1 (file).
+001D   0BD2           00082     decfsz      tmrctr              ; check the time of inactivity
+001E   2???           00083     goto        ISR1
+001F   2???           00084     goto        ISRsleep
+                      00085     
+Warning[207]: Found label after column 1. (ISR1)
+0020                  00086     ISR1
+0020   100C           00087     bcf         PIR1,0              ; clear the tmr1 interrupt flag bit
+0021   0009           00088     retfie
+                      00089     
+Warning[207]: Found label after column 1. (ISRsleep)
+0022                  00090     ISRsleep                        ; send device to sleep
+0022   140B           00091     bsf         INTCON,0            ;enable RBO interrupt 
+0023   1007           00092     bcf         PORTC,0             ; backlight
+0024   0063           00093     sleep
+0025   100B           00094     bcf         INTCON,0            ;disable RBO interrupt
+0026   100C           00095     bcf         PIR1,0
+0027   1407           00096     bsf         PORTC,0             ; backlight
+0028   0009           00097     retfie   
+                      00098 
+                      00099 ;Menus....
+                      00100     
+0029                  00101 Door_OpenClose:                     ; subroutine for loop of opening and closing the door
+                      00102     
+0029   1010           00103     bcf         T1CON,0             ;off tmr1
+002A   2???           00104     call        LCD_clear           ;clear display
+002B   2???           00105     call        Msg1                ;"Enter Password"
+002C   2???           00106     call        LCD_Enter           ;input mode
+002D   2???           00107     goto        Password_Check      ; check the password
+Warning[207]: Found label after column 1. (closedoor)
+002E                  00108     closedoor
+002E   2???           00109     call        Key_Check
+002F   3044           00110     movlw       'D'
+0030   0225           00111     subwf       button_pressed,0    ; close door when D is pressed
+0031   1903           00112     btfsc       STATUS,Z
+0032   2???           00113     goto        Door_Close
+0033   2???           00114     goto        closedoor
+                      00115     
+0034                  00116 Pword_Reset:                        ; subroutine for changing the password
+0034   2???           00117     call        LCD_clear           ;clear display
+0035   2???           00118     call        Msg4                ;"Reset Password"
+0036   2???           00119     call        Delay
+0037   2???           00120     call        Reset_P
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0038   0008           00121     return
+                      00122     
+0039                  00123 About:                              ;Help and information
+0039   1010           00124     bcf         T1CON,0             ;off tmr1
+003A   2???           00125     call        LCD_clear
+003B   2???           00126     call        Msg8                ;'TECH SOLUTIONS\n081-2227222'
+                      00127     
+003C   2???           00128     call        Delay
+003D   2???           00129     call        Delay
+003E   2???           00130     call        Delay
+003F   2???           00131     call        Delay
+                      00132     
+0040   2???           00133     call        Tmr1_On
+                      00134     
+0041   0008           00135     return
+                      00136     
+                      00137     
+                      00138     
+                      00139  ;Password Check.......
+                      00140  
+0042                  00141 Password_Check:                     ; check the password 
+0042   1010           00142     bcf         T1CON,0             ;off tmr1
+0043   2???           00143     call        Get_Pword
+0044   2???           00144     call        Store_UserCode
+0045   3003           00145     movlw       3
+0046   00A7           00146     movwf       PwordCheck          ; for 3 incorrect attempts
+                      00147     ;goto       Check_IncorrectAttempts
+                      00148     
+                      00149  
+0047                  00150 Check_IncorrectAttempts:            ; check the number of incorrect attempts and trigger and alarm
+                      00151     
+0047   0BA7           00152     decfsz      PwordCheck,1
+0048   2???           00153     goto        Compare_Code
+0049   2???           00154     goto        Attempts_Over
+                      00155     
+                      00156  
+004A                  00157 Get_Pword:                          ; to get the password stored in eeprom
+                      00158     
+004A   3030           00159     movlw       0x30                ; passowrd is retrieved to 0x30 to 0x33
+004B   0084           00160     movwf       FSR
+                      00161     
+004C   3000           00162     movlw       0x00                ; pword stored at 0x00 to 0x03
+004D   00D1           00163     movwf       eead
+004E   2???           00164     call        Read_EEPROM
+004F   0080           00165     movwf       INDF
+                      00166     
+0050   0A84           00167     incf        FSR,1
+0051   0AD1           00168     incf        eead,1
+0052   2???           00169     call        Read_EEPROM
+0053   0080           00170     movwf       INDF
+                      00171     
+0054   0A84           00172     incf        FSR,1
+0055   0AD1           00173     incf        eead,1
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0056   2???           00174     call        Read_EEPROM
+0057   0080           00175     movwf       INDF
+                      00176     
+0058   0A84           00177     incf        FSR,1
+0059   0AD1           00178     incf        eead,1
+005A   2???           00179     call        Read_EEPROM
+005B   0080           00180     movwf       INDF
+005C   0008           00181     return
+                      00182   
+Warning[207]: Found label after column 1. (Store_UserCode)
+005D                  00183  Store_UserCode:            ; to store the code given by user
+                      00184     
+005D   3040           00185     movlw       0x40
+005E   0084           00186     movwf       FSR
+                      00187     
+Warning[207]: Found label after column 1. (loopinstore)
+005F                  00188     loopinstore
+005F   2???           00189     call        Key_Check
+0060   0825           00190     movf        button_pressed,0
+0061   0080           00191     movwf       INDF
+0062   2???           00192     call        LCD_char
+0063   2???           00193     call        Delay5
+0064   0A84           00194     incf        FSR,1
+0065   1D04           00195     btfss       FSR,2       ;0x43=0100 0111 therefore checks the 3rd bit ti find weather 4 digits are en
+                            tered
+0066   2???           00196     goto        loopinstore
+0067   0008           00197     return
+                      00198     
+0068                  00199 Compare_Code:                       ; compare the user submited code with the correct password
+                      00200     
+0068   3030           00201     movlw       0x30
+0069   0084           00202     movwf        FSR                ; point to 0x30-0x33
+                      00203     
+Warning[207]: Found label after column 1. (loopinCompare)
+006A                  00204     loopinCompare
+006A   0800           00205     movf        INDF,0  
+006B   00A6           00206     movwf       PwordTemp           ;store the value in current pointed register
+006C   3010           00207     movlw       0x10
+006D   0784           00208     addwf       FSR,1               ;point to 0x40-0x43
+006E   0800           00209     movf        INDF,0
+006F   0226           00210     subwf       PwordTemp,0         ;check weather 0x30=0x40 and ....
+0070   1D03           00211     btfss       STATUS,Z            ;check 0 flag
+0071   2???           00212     goto        Compared_IncorrectPword ;subroutine for wrong password
+0072   3010           00213     movlw       0x10                
+0073   0284           00214     subwf       FSR,1               ;point back to 30
+0074   0A84           00215     incf        FSR,1
+0075   1D04           00216     btfss       FSR,2
+0076   2???           00217     goto        loopinCompare
+0077   2???           00218     goto        Compared_CorrectPword;subroutine for right password
+                      00219     
+                      00220     
+                      00221     
+Warning[207]: Found label after column 1. (Compared_IncorrectPword)
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0078                  00222  Compared_IncorrectPword:           ;subroutine for wrong password
+                      00223     
+0078   2???           00224     call        LCD_clear
+0079   2???           00225     call        Msg2                ;'Incprrect. Retry'
+007A   2???           00226     call        LCD_Enter
+007B   2???           00227     call        Store_UserCode
+007C   2???           00228     goto        Check_IncorrectAttempts
+                      00229     
+                      00230     
+Warning[207]: Found label after column 1. (Compared_CorrectPword)
+007D                  00231  Compared_CorrectPword:             ;subroutine for right password
+                      00232     
+007D   1087           00233     bcf         KEYPORTC,1          ; off the alarm if its triggered
+007E   2???           00234     call        LCD_clear
+007F   1828           00235     btfsc       statusreg,0         ; go back to password reset
+0080   2???           00236     goto        reset1              
+                      00237     
+                      00238     
+0081   2???           00239     call        Msg3                ; 'Correct;    
+0082   2???           00240     call        Door_Open
+0083   2???           00241     goto        closedoor
+                      00242     
+                      00243     
+Warning[207]: Found label after column 1. (Attempts_Over)
+0084                  00244  Attempts_Over:                     ; trigger the alarm
+                      00245     
+0084   2???           00246     call        LCD_clear
+0085   2???           00247     call        Alarm_On
+0086   2???           00248     goto        Compare_Code
+                      00249     
+                      00250     
+                      00251  ;Password Reset
+                      00252  
+Warning[207]: Found label after column 1. (Reset_P)
+0087                  00253  Reset_P:                           ;reset the password
+0087   2???           00254     call        LCD_clear
+0088   2???           00255     call        Msg5                ;'old password'
+0089   2???           00256     call        LCD_Enter
+008A   1428           00257     bsf         statusreg,0             
+008B   2???           00258     goto        Password_Check
+Warning[207]: Found label after column 1. (reset1)
+008C                  00259     reset1
+008C   1028           00260     bcf         statusreg,0
+008D   2???           00261     call        Msg6                ;'new password'
+008E   2???           00262     call        LCD_Enter
+008F   2???           00263     call        Store_UserCodetoEEPROM
+0090   2???           00264     call        LCD_clear
+0091   2???           00265     call        Msg7                ;reset complete
+0092   2???           00266     call        Delay
+                      00267     
+0093   2???           00268     call        Tmr1_On
+                      00269     
+0094   0008           00270     return
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00271     
+Warning[207]: Found label after column 1. (Store_UserCodetoEEPROM)
+0095                  00272  Store_UserCodetoEEPROM:            ; store the new password on eeprom
+0095   2???           00273     call        Store_UserCode
+                      00274     
+0096   3000           00275     movlw       0x00                ; stored from 0x00 to 0x03
+0097   00D1           00276     movwf       eead    
+                      00277     
+0098   0840           00278     movf        0x40,0              ;'1'
+0099   2???           00279     call        Write_EEPROM
+009A   0AD1           00280     incf        eead,1
+                      00281     
+009B   0841           00282     movf        0x41,0              ;'2'
+009C   2???           00283     call        Write_EEPROM
+009D   0AD1           00284     incf        eead,1
+                      00285     
+009E   0842           00286      movf       0x42,0              ;'3'
+009F   2???           00287     call        Write_EEPROM
+00A0   0AD1           00288     incf        eead,1
+                      00289     
+00A1   0843           00290     movf        0x43,0              ;'4'
+00A2   2???           00291     call        Write_EEPROM
+00A3   0AD1           00292     incf        eead,1
+                      00293     
+00A4   3001           00294     movlw       0x01                ;to note that user had changed the password.
+00A5   2???           00295     call        Write_EEPROM
+00A6   0008           00296     return
+                      00297     
+Warning[207]: Found label after column 1. (Store_Pword)
+00A7                  00298  Store_Pword:                       ; store the fisrt password. from 0x00 to 0x03
+                      00299     
+00A7   3000           00300     movlw       0x00
+00A8   00D1           00301     movwf       eead    
+                      00302     
+00A9   3031           00303     movlw       '1'
+00AA   2???           00304     call        Write_EEPROM
+00AB   0AD1           00305     incf        eead,1
+                      00306     
+00AC   3032           00307     movlw       '2'
+00AD   2???           00308     call        Write_EEPROM
+00AE   0AD1           00309     incf        eead,1
+                      00310     
+00AF   3033           00311     movlw       '3'
+00B0   2???           00312     call        Write_EEPROM
+00B1   0AD1           00313     incf        eead,1
+                      00314     
+00B2   3034           00315     movlw       '4'
+00B3   2???           00316     call        Write_EEPROM
+00B4   0008           00317     return
+                      00318     
+Warning[207]: Found label after column 1. (Check_PwordChange)
+00B5                  00319  Check_PwordChange:                 ; check whether the password is changed by the user at begining.else
+                             write eeprom with default password
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00320     
+00B5   3004           00321     movlw       0x04
+00B6   00D1           00322     movwf       eead
+00B7   2???           00323     call        Read_EEPROM
+00B8   1800           00324     btfsc       W,0
+00B9   2???           00325     call        Store_Pword
+00BA   0008           00326     return
+                      00327     
+                      00328      
+                      00329  ; Door & Alarm Control
+                      00330  
+Warning[207]: Found label after column 1. (DoorAlarm_Init)
+00BB                  00331  DoorAlarm_Init:                    ; initialize the motor
+                      00332     
+00BB   1683           00333     bsf             STATUS,5        ;select bank1
+00BC   30FF           00334     movlw           d'255'
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00BD   0092           00335     movwf           PR2             ; set the period of PWM signal to 16ms
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00BE   1107           00336     bcf             KEYTRISC,2      ; motor
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00BF   1087           00337     bcf             KEYTRISC,1      ; alarm
+00C0   1283           00338     bcf             STATUS,5        ;select bank 0
+00C1   0008           00339     return
+                      00340  
+Warning[207]: Found label after column 1. (Door_Open)
+00C2                  00341  Door_Open:                         ;open the door when password is correct
+                      00342     
+                      00343     
+00C2   301F           00344     movlw           b'00011111'     ;make pwm duty cycle to 2ms.(d125)
+00C3   0095           00345     movwf           CCPR1L          ;higher 8 bits
+00C4   301C           00346     movlw           b'00011100'
+00C5   0097           00347     movwf           CCP1CON         ;lower 2 bits in 4-5.11xx in 0-4 for PWM mode.
+00C6   3006           00348     movlw           b'00000110'
+00C7   0092           00349     movwf           T2CON           ;on timer2 and set the prescaler to x16.
+                      00350     
+00C8   0008           00351     return
+                      00352     
+Warning[207]: Found label after column 1. (Door_Close)
+00C9                  00353  Door_Close:                        ;close the door 
+                      00354     
+                      00355     
+00C9   300B           00356     movlw           b'00001011'     ;make pwm duty cycle to 1ms.(d62)
+00CA   0095           00357     movwf           CCPR1L
+00CB   302C           00358     movlw           b'00101100'
+00CC   0097           00359     movwf           CCP1CON
+00CD   3006           00360     movlw           b'00000110'
+00CE   0092           00361     movwf           T2CON
+00CF   2???           00362     call            Delay
+00D0   2???           00363     call            Delay
+00D1   2???           00364     call            Delay
+00D2   1112           00365     bcf             T2CON,2         ;off timer2
+00D3   1117           00366     bcf             CCP1CON,2       ;
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00D4   1197           00367     bcf             CCP1CON,3       ;off CCP1
+00D5   2???           00368     call            Tmr1_On
+                      00369     
+                      00370    
+                      00371     ;bsf                    statusreg,1
+00D6   0008           00372     return
+                      00373     
+Warning[207]: Found label after column 1. (Alarm_On)
+00D7                  00374  Alarm_On:
+                      00375     
+00D7   1487           00376     bsf         KEYPORTC,1          ;Alarm on
+                      00377     ;call       Delay
+00D8   0008           00378     return
+                      00379  
+                      00380  ;Timer1
+                      00381  
+Warning[207]: Found label after column 1. (Tmr1_Init)
+00D9                  00382  Tmr1_Init:                         ; configure timer 1
+                      00383     
+00D9   1683           00384     bsf         STATUS,5            ; bank1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00DA   140C           00385     bsf         PIE1,0              ; enable timer1 overflow bit
+00DB   1283           00386     bcf         STATUS,5            ; bank 0
+00DC   170B           00387     bsf         INTCON,6            ; enable peripheral interrupt enable bit
+00DD   178B           00388     bsf         INTCON,7            ; enable global interrupt bit
+                      00389     
+00DE   3030           00390     movlw       b'00110000'         ; 8:1 prescale
+00DF   0090           00391     movwf       T1CON
+                      00392  
+Warning[207]: Found label after column 1. (Tmr1_On)
+00E0                  00393  Tmr1_On:                           ; on the timer 1
+                      00394     
+00E0   300A           00395     movlw           d'10'           ; check for 10s of inactivity
+00E1   00D2           00396     movwf           tmrctr
+00E2   1410           00397     bsf             T1CON,0         ; on timer 1 (sleep mode init)
+00E3   0008           00398     return
+                      00399     
+                      00400     
+                      00401  ;EEPROM
+                      00402  
+Warning[207]: Found label after column 1. (Read_EEPROM)
+00E4                  00403  Read_EEPROM:
+                      00404     
+00E4   1703           00405     bsf         STATUS, 6           
+00E5   1283           00406     bcf         STATUS, 5           ;Bank 2
+00E6   0851           00407     movf        eead, 0             ;Write address
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00E7   008D           00408     movwf       EEADR               ;to read from
+00E8   1683           00409     bsf         STATUS, 5           ;Bank 3
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00E9   138C           00410     bcf         EECON1, 7           ;Point to Data memory
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00EA   140C           00411     bsf         EECON1, 0           ;Start read operation
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00EB   1283           00412     bcf         STATUS, 5           ;Bank 2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00EC   080C           00413     movf        EEDATA, 0           ;W = EEDATA
+00ED   1303           00414     bcf         STATUS, 6           ;select bank 0
+00EE   0008           00415     return
+                      00416 
+00EF                  00417 Write_EEPROM:
+                      00418     
+00EF   00D0           00419     movwf       eeval               ; move the value to register
+00F0   1703           00420     bsf         STATUS, 6           
+00F1   0851           00421     movf        eead, 0             ;Address to
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F2   008D           00422     movwf       EEADR               ;write to
+00F3   0850           00423     movf        eeval, 0            ;Data to
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F4   008C           00424     movwf       EEDATA              ;write
+00F5   1683           00425     bsf         STATUS, 5           ;Bank 3
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F6   138C           00426     bcf         EECON1, 7           ;Point to Data memory
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F7   150C           00427     bsf         EECON1, 2           ;Enable writes
+                      00428                                     ;Only disable interrupts
+00F8   138B           00429     bcf         INTCON, GIE         ;if already enabled,
+                      00430                                     ;otherwise discard
+00F9   3055           00431     movlw       0x55                ;Write 55h to
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00FA   008D           00432     movwf       EECON2              ;EECON2
+00FB   30AA           00433     movlw        0xAA               ;Write AAh to
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00FC   008D           00434     movwf       EECON2              ;EECON2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00FD   148C           00435     bsf         EECON1, 1           ;Start write operation
+                      00436                                     ;Only enable interrupts
+00FE   178B           00437     bsf         INTCON, GIE         ;if using interrupts,
+                      00438                                     ;otherwise discard
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00FF   110C           00439     bcf         EECON1, 2           ;Disable writes
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0100   188C           00440     btfsc       EECON1, 1           ;Wait for write to finish
+0101   2???           00441     goto        $-1
+0102   1283           00442     bcf         STATUS,5            
+0103   1303           00443     bcf         STATUS,6            ;select bank 0
+                      00444     
+                      00445     
+0104   0008           00446     return
+                      00447     
+                      00448  ;LCD routines...........   
+                      00449  
+0105                  00450 LCD_Init:                            ; initialize LED to 4 bit mode
+                      00451     
+0105   1683           00452     bsf         STATUS, 5           ; select bank 1 
+0106   3001           00453     movlw       b'00000001'         ; LCDPORT Outputs. RB0 as an input fot interrupt
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0107   0086           00454     movwf       LCDTRIS             ; Change PortB to output
+0108   1283           00455     bcf         STATUS, 5           ; select bank 0
+0109   2???           00456     call        Delay5              ; Wait 15 msecs
+010A   2???           00457     call        Delay5      
+010B   2???           00458     call        Delay5      
+010C   3030           00459     movlw       b'00110000'         ; Send the Reset Instruction
+010D   0086           00460     movwf       LCDPORT     
+010E   2???           00461     call        Pulse_e             ; Pulse LCD_E
+010F   2???           00462     call        Delay5              ; Delay 5ms
+0110   2???           00463     call        Pulse_e             ; Pulse LCD_E
+0111   2???           00464     call        Delay2              ; Delay of 2ms
+0112   2???           00465     call        Pulse_e             ; Pulse LCD_E
+0113   2???           00466     call        Delay2              ; Delay of 2ms
+0114   3020           00467     movlw       b'00100000'         ; Send the Data Length Specification
+0115   0086           00468     movwf       LCDPORT     
+0116   2???           00469     call        Pulse_e             ; Pulse LCD_E
+0117   2???           00470     call        Delay2              ; Delay of 2ms
+0118   3028           00471     movlw       b'00101000'         ; Set Interface Length
+0119   2???           00472     call        LCD_Ins     
+011A   3008           00473     movlw       b'00001000'         ; Turn Off Display
+011B   2???           00474     call        LCD_Ins     
+011C   3001           00475     movlw       b'00000001'         ; Clear Display RAM
+011D   2???           00476     call        LCD_Ins     
+011E   3006           00477     movlw       b'00000110'         ; Set Cursor Movement
+011F   2???           00478     call        LCD_Ins     
+0120   300C           00479     movlw       b'00001100'         ; Turn on Display
+0121   2???           00480     call        LCD_Ins     
+0122   3001           00481     movlw       b'00000001'         ; Clear LCD
+0123   2???           00482     call        LCD_Ins     
+0124   1407           00483     bsf         PORTC,0             ; on backlight
+0125   0008           00484     return 
+                      00485     
+0126                  00486 LCD_Ins:                            ;Send the Instruction to the LCD
+                      00487     
+0126   00A2           00488     movwf       LCDTemp             ; Save the Value
+0127   39F0           00489     andlw       b'11110000'         ; High Nibble first
+0128   0086           00490     movwf       LCDPORT     
+0129   1106           00491     bcf         LCDPORT,2           
+012A   2???           00492     call        Pulse_e     
+012B   0E22           00493     swapf       LCDTemp, 0          ; Low Nibble Second
+012C   39F0           00494     andlw       b'11110000'         
+012D   0086           00495     movwf       LCDPORT     
+012E   1106           00496     bcf         LCDPORT,2           
+012F   2???           00497     call        Pulse_e     
+0130   2???           00498     call        Delay2              ; wait 2 ms
+                      00499     
+0131   0008           00500     return 
+                      00501 
+0132                  00502 LCD_char:                           ; Send the Character to the LCD
+                      00503     
+0132   00A2           00504     movwf       LCDTemp             ; Save the Value
+0133   39F0           00505     andlw       0xF0                ; High Nibble first
+0134   0086           00506     movwf       LCDPORT     
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0135   1506           00507     bsf         LCDPORT,2           
+0136   2???           00508     call        Pulse_e ;
+0137   0E22           00509     swapf       LCDTemp, 0          ; Low Nibble Second
+0138   39F0           00510     andlw       0xF0        
+0139   0086           00511     movwf       LCDPORT     
+013A   1506           00512     bsf         LCDPORT,2           
+013B   2???           00513     call        Pulse_e     
+013C   2???           00514     call        Delay2     
+013D   0000           00515     nop 
+013E   0008           00516     return 
+                      00517 
+013F                  00518 Pulse_e:                            ;LCD Enable pulse to write data from LCDPORT into LCD module.
+                      00519     
+013F   1586           00520     bsf         LCDPORT,3            
+0140   0000           00521     nop                      
+0141   1186           00522     bcf         LCDPORT,3                    
+0142   0000           00523     nop                     
+0143   0008           00524     return
+                      00525 
+0144                  00526 LCD_Enter:                          ;Input Mode
+                      00527     
+0144   30C0           00528     movlw       b'11000000'         ;Goto 2nd row
+0145   2???           00529     call        LCD_Ins
+0146   300F           00530     movlw       b'00001111'         ; Turn on Display/Cursor
+0147   2???           00531     call        LCD_Ins
+0148   0008           00532     return
+                      00533 
+0149                  00534 LCD_clear:
+                      00535     
+0149   3001           00536     movlw        b'00000001'        ; Clear display
+014A   2???           00537     call        LCD_Ins
+014B   2???           00538     call        Delay5
+014C   300C           00539     movlw       b'00001100'         ; Turn off Cursor
+014D   2???           00540     call        LCD_Ins
+014E   2???           00541     call        Delay2
+014F   0008           00542     return
+                      00543     
+                      00544 ;Keypad routines.............
+                      00545     
+0150                  00546 Key_Init:                                ;Initalize keypad
+                      00547     
+0150   1683           00548     bsf         STATUS,5                ;select bank 1
+0151   30F0           00549     movlw       b'11110000'             ;0-4 outputs,4-7 inputs in portc
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0152   0087           00550     movwf       KEYTRISC
+0153   3006           00551     movlw       0x06    
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0154   009F           00552     movwf       ADCON1                  ;configure all pins as digital inputs
+0155   3000           00553     movlw       b'00000000'             ; make portA output  
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0156   0085           00554     movwf       KEYTRISA
+0157   1283           00555     bcf         STATUS,5                ;select bank0
+0158   0185           00556     clrf        KEYPORTA                ; clear the port
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0159   0187           00557     clrf        KEYPORTC                ; clear the port
+015A   01A5           00558     clrf        button_pressed          ;clear the button
+015B   0008           00559     return
+                      00560     
+                      00561     
+015C                  00562 Key_Check:                              ;check what button has been pressed
+                      00563     
+015C   3058           00564     movlw       'X'                     ;X stored as buttonpressed
+015D   00A5           00565     movwf       button_pressed
+015E   1405           00566     bsf         KEYPORTA, 0             ;scan the first column of keys          
+015F   1A07           00567     btfsc       KEYPORTC, 4                             
+0160   3037           00568     movlw       '7'                     ;7 is pressed.
+0161   1A87           00569     btfsc       KEYPORTC, 5                             
+0162   3034           00570     movlw       '4'                     ;4 is pressed.
+0163   1B07           00571     btfsc       KEYPORTC, 6                             
+0164   3031           00572     movlw       '1'                     ;1 is pressed.
+0165   1B87           00573     btfsc       KEYPORTC, 7                             
+0166   302A           00574     movlw       '*'                     ;* is pressed.
+0167   1005           00575     bcf         KEYPORTA, 0             ;take first column low.
+                      00576 
+0168   1485           00577     bsf         KEYPORTA, 1             ;scan the second column of keys
+0169   1A07           00578     btfsc       KEYPORTC, 4                     
+016A   3038           00579     movlw       '8'                     ;8 is pressed.
+016B   1A87           00580     btfsc       KEYPORTC, 5                     
+016C   3035           00581     movlw       '5'                     ;5 is pressed.
+016D   1B07           00582     btfsc       KEYPORTC, 6                     
+016E   3032           00583     movlw       '2'                     ;2 is pressed.
+016F   1B87           00584     btfsc       KEYPORTC, 7                     
+0170   3030           00585     movlw       '0'                     ;0 is pressed.
+0171   1085           00586     bcf         KEYPORTA, 1             ;take second column low.
+                      00587 
+0172   1505           00588     bsf         KEYPORTA, 2             ;scan the third column of keys 
+0173   1A07           00589     btfsc       KEYPORTC, 4                     
+0174   3039           00590     movlw       '9'                     ;9 is pressed.
+0175   1A87           00591     btfsc       KEYPORTC, 5                     
+0176   3036           00592     movlw       '6'                     ;6 is pressed.
+0177   1B07           00593     btfsc       KEYPORTC, 6                     
+0178   3033           00594     movlw       '3'                     ;3 is pressed.
+0179   1B87           00595     btfsc       KEYPORTC, 7                     
+017A   3023           00596     movlw       '#'                     ;1 is pressed.
+017B   1105           00597     bcf         KEYPORTA, 2             ;take rhird column low.
+                      00598 
+017C   1585           00599     bsf         KEYPORTA, 3             ;scan the last column of keys
+017D   1A07           00600     btfsc       KEYPORTC, 4                     
+017E   3041           00601     movlw       'A'                     ;A is pressed.
+017F   1A87           00602     btfsc       KEYPORTC, 5                     
+0180   3042           00603     movlw       'B'                     ;B is pressed.
+0181   1B07           00604     btfsc       KEYPORTC, 6                     
+0182   3043           00605     movlw       'C'                     ;C is pressed.
+0183   1B87           00606     btfsc       KEYPORTC, 7                     
+0184   3044           00607     movlw       'D'                     ;D is pressed.
+0185   1185           00608     bcf         KEYPORTA, 3             ;take last column low.
+                      00609     
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0186   00A5           00610     movwf       button_pressed
+0187   3058           00611     movlw       'X'
+0188   0225           00612     subwf       button_pressed,0        ; Check whether the button pressed ='X'
+0189   1903           00613     btfsc       STATUS,Z                ; else a button has been pressed and stored
+018A   2???           00614     goto        Key_Check
+                      00615                         
+018B   0008           00616     return
+                      00617  
+                      00618 
+                      00619     
+                      00620     
+                      00621 ; Delay routines........
+                      00622     
+018C                  00623 Delay5:                                 ;5ms @ 1MHz
+                      00624     
+018C   3002           00625     movlw       d'2'
+018D   00A0           00626     movwf       c1
+018E   2???           00627     call        Delay
+018F   0008           00628     return
+                      00629     
+0190                  00630 Delay:                                  ;0.7s
+                      00631     
+0190   0BA0           00632     decfsz      c1,1    
+0191   2???           00633     goto        Delay
+0192   0BA1           00634     decfsz      c2,1
+0193   2???           00635     goto        Delay
+0194   0008           00636     return
+0195                  00637 Delay2:                                 ;2ms
+0195   0BA0           00638     decfsz      c1,1        
+0196   2???           00639     goto        Delay2
+0197   0008           00640     return
+                      00641  
+                      00642  
+                      00643 
+                      00644 
+                      00645 ;Messages..........
+                      00646  
+Warning[207]: Found label after column 1. (Msg0)
+0198                  00647  Msg0:                                  ;'_**WELCOME**_'
+                      00648     
+0198   3020           00649     movlw   ' '
+0199   2???           00650     call    LCD_char
+019A   3020           00651     movlw   ' '
+019B   2???           00652     call    LCD_char
+019C   302A           00653     movlw   '*'
+019D   2???           00654     call    LCD_char
+019E   302A           00655     movlw   '*'
+019F   2???           00656     call    LCD_char
+01A0   3057           00657     movlw   'W'
+01A1   2???           00658     call    LCD_char
+01A2   3045           00659     movlw   'E'
+01A3   2???           00660     call    LCD_char
+01A4   304C           00661     movlw   'L'
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01A5   2???           00662     call    LCD_char
+01A6   3043           00663     movlw   'C'
+01A7   2???           00664     call    LCD_char
+01A8   304F           00665     movlw   'O'
+01A9   2???           00666     call    LCD_char
+01AA   304D           00667     movlw   'M'
+01AB   2???           00668     call    LCD_char
+01AC   3045           00669     movlw   'E'
+01AD   2???           00670     call    LCD_char
+01AE   302A           00671     movlw   '*'
+01AF   2???           00672     call    LCD_char
+01B0   302A           00673     movlw   '*'
+01B1   2???           00674     call    LCD_char
+01B2   0008           00675     return
+                      00676     
+01B3                  00677 Msg1:                               ; 'Enter Password'
+01B3   3045           00678     movlw   'E'
+01B4   2???           00679     call    LCD_char
+01B5   304E           00680     movlw   'N'
+01B6   2???           00681     call    LCD_char
+01B7   3054           00682     movlw   'T'
+01B8   2???           00683     call    LCD_char
+01B9   3045           00684     movlw   'E'
+01BA   2???           00685     call    LCD_char
+01BB   3052           00686     movlw   'R'
+01BC   2???           00687     call    LCD_char
+01BD   3020           00688     movlw   ' '
+01BE   2???           00689     call    LCD_char
+01BF   3050           00690     movlw   'P'
+01C0   2???           00691     call    LCD_char
+01C1   3041           00692     movlw   'A'
+01C2   2???           00693     call    LCD_char
+01C3   3053           00694     movlw   'S'
+01C4   2???           00695     call    LCD_char
+01C5   3053           00696     movlw   'S'
+01C6   2???           00697     call    LCD_char
+01C7   3057           00698     movlw   'W'
+01C8   2???           00699     call    LCD_char
+01C9   304F           00700     movlw   'O'
+01CA   2???           00701     call    LCD_char
+01CB   3052           00702     movlw   'R'
+01CC   2???           00703     call    LCD_char
+01CD   3044           00704     movlw   'D'
+01CE   2???           00705     call    LCD_char
+01CF   0008           00706     return
+                      00707  
+Warning[207]: Found label after column 1. (Msg2)
+01D0                  00708  Msg2:                               ; 'Incorrect Password'
+01D0   3049           00709     movlw   'I'
+01D1   2???           00710     call    LCD_char
+01D2   304E           00711     movlw   'N'
+01D3   2???           00712     call    LCD_char
+01D4   3043           00713     movlw   'C'
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01D5   2???           00714     call    LCD_char
+01D6   304F           00715     movlw   'O'
+01D7   2???           00716     call    LCD_char
+01D8   3052           00717     movlw   'R'
+01D9   2???           00718     call    LCD_char
+01DA   3052           00719     movlw   'R'
+01DB   2???           00720     call    LCD_char
+01DC   3045           00721     movlw   'E'
+01DD   2???           00722     call    LCD_char
+01DE   3043           00723     movlw   'C'
+01DF   2???           00724     call    LCD_char
+01E0   3054           00725     movlw   'T'
+01E1   2???           00726     call    LCD_char
+01E2   302E           00727     movlw   '.'
+01E3   2???           00728     call    LCD_char
+01E4   3020           00729     movlw   ' '
+01E5   2???           00730     call    LCD_char
+01E6   3052           00731     movlw   'R'
+01E7   2???           00732     call    LCD_char
+01E8   3045           00733     movlw   'E'
+01E9   2???           00734     call    LCD_char
+01EA   3054           00735     movlw   'T'
+01EB   2???           00736     call    LCD_char
+01EC   3052           00737     movlw   'R'
+01ED   2???           00738     call    LCD_char
+01EE   3059           00739     movlw   'Y'
+01EF   2???           00740     call    LCD_char
+01F0   0008           00741     return
+                      00742     
+Warning[207]: Found label after column 1. (Msg3)
+01F1                  00743  Msg3:                                  ; 'Correct Password'
+01F1   3043           00744     movlw   'C'
+01F2   2???           00745     call    LCD_char
+01F3   304F           00746     movlw   'O'
+01F4   2???           00747     call    LCD_char
+01F5   3052           00748     movlw   'R'
+01F6   2???           00749     call    LCD_char
+01F7   3052           00750     movlw   'R'
+01F8   2???           00751     call    LCD_char
+01F9   3045           00752     movlw   'E'
+01FA   2???           00753     call    LCD_char
+01FB   3043           00754     movlw   'C'
+01FC   2???           00755     call    LCD_char
+01FD   3054           00756     movlw   'T'
+01FE   2???           00757     call    LCD_char
+01FF   0008           00758     return
+                      00759     
+0200                  00760 Msg4:                               ; 'Reset Password'
+0200   3052           00761     movlw   'R'
+0201   2???           00762     call    LCD_char
+0202   3045           00763     movlw   'E'
+0203   2???           00764     call    LCD_char
+0204   3053           00765     movlw   'S'
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0205   2???           00766     call    LCD_char
+0206   3045           00767     movlw   'E'
+0207   2???           00768     call    LCD_char
+0208   3054           00769     movlw   'T'
+0209   2???           00770     call    LCD_char
+020A   3020           00771     movlw   ' '
+020B   2???           00772     call    LCD_char
+020C   3050           00773     movlw   'P'
+020D   2???           00774     call    LCD_char
+020E   3041           00775     movlw   'A'
+020F   2???           00776     call    LCD_char
+0210   3053           00777     movlw   'S'
+0211   2???           00778     call    LCD_char
+0212   3053           00779     movlw   'S'
+0213   2???           00780     call    LCD_char
+0214   3057           00781     movlw   'W'
+0215   2???           00782     call    LCD_char
+0216   304F           00783     movlw   'O'
+0217   2???           00784     call    LCD_char
+0218   3052           00785     movlw   'R'
+0219   2???           00786     call    LCD_char
+021A   3044           00787     movlw   'D'
+021B   2???           00788     call    LCD_char
+021C   0008           00789     return
+                      00790     
+021D                  00791 Msg5:                               ; 'Old Password'
+021D   304F           00792     movlw   'O'
+021E   2???           00793     call    LCD_char
+021F   304C           00794     movlw   'L'
+0220   2???           00795     call    LCD_char
+0221   3044           00796     movlw   'D'
+0222   2???           00797     call    LCD_char
+0223   3020           00798     movlw   ' '
+0224   2???           00799     call    LCD_char
+0225   3050           00800     movlw   'P'
+0226   2???           00801     call    LCD_char
+0227   3041           00802     movlw   'A'
+0228   2???           00803     call    LCD_char
+0229   3053           00804     movlw   'S'
+022A   2???           00805     call    LCD_char
+022B   3053           00806     movlw   'S'
+022C   2???           00807     call    LCD_char
+022D   3057           00808     movlw   'W'
+022E   2???           00809     call    LCD_char
+022F   304F           00810     movlw   'O'
+0230   2???           00811     call    LCD_char
+0231   3052           00812     movlw   'R'
+0232   2???           00813     call    LCD_char
+0233   3044           00814     movlw   'D'
+0234   2???           00815     call    LCD_char
+0235   0008           00816     return
+                      00817     
+0236                  00818 Msg6:                               ; 'New Password'
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0236   304E           00819     movlw   'N'
+0237   2???           00820     call    LCD_char
+0238   3045           00821     movlw   'E'
+0239   2???           00822     call    LCD_char
+023A   3057           00823     movlw   'W'
+023B   2???           00824     call    LCD_char
+023C   3020           00825     movlw   ' '
+023D   2???           00826     call    LCD_char
+023E   3050           00827     movlw   'P'
+023F   2???           00828     call    LCD_char
+0240   3041           00829     movlw   'A'
+0241   2???           00830     call    LCD_char
+0242   3053           00831     movlw   'S'
+0243   2???           00832     call    LCD_char
+0244   3053           00833     movlw   'S'
+0245   2???           00834     call    LCD_char
+0246   3057           00835     movlw   'W'
+0247   2???           00836     call    LCD_char
+0248   304F           00837     movlw   'O'
+0249   2???           00838     call    LCD_char
+024A   3052           00839     movlw   'R'
+024B   2???           00840     call    LCD_char
+024C   3044           00841     movlw   'D'
+024D   2???           00842     call    LCD_char
+024E   0008           00843     return
+                      00844     
+024F                  00845 Msg7:                               ; 'Reset Complete'
+024F   3052           00846     movlw   'R'
+0250   2???           00847     call    LCD_char
+0251   3045           00848     movlw   'E'
+0252   2???           00849     call    LCD_char
+0253   3053           00850     movlw   'S'
+0254   2???           00851     call    LCD_char
+0255   3045           00852     movlw   'E'
+0256   2???           00853     call    LCD_char
+0257   3054           00854     movlw   'T'
+0258   2???           00855     call    LCD_char
+0259   3020           00856     movlw   ' '
+025A   2???           00857     call    LCD_char
+025B   3043           00858     movlw   'C'
+025C   2???           00859     call    LCD_char
+025D   304F           00860     movlw   'O'
+025E   2???           00861     call    LCD_char
+025F   304D           00862     movlw   'M'
+0260   2???           00863     call    LCD_char
+0261   3050           00864     movlw   'P'
+0262   2???           00865     call    LCD_char
+0263   304C           00866     movlw   'L'
+0264   2???           00867     call    LCD_char
+0265   3045           00868     movlw   'E'
+0266   2???           00869     call    LCD_char
+0267   3054           00870     movlw   'T'
+0268   2???           00871     call    LCD_char
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0269   3045           00872     movlw   'E'
+026A   2???           00873     call    LCD_char
+026B   0008           00874     return
+                      00875 
+026C                  00876 Msg8:                               ; 'TECH SOLUTIONS\n081-2227222'
+026C   3054           00877     movlw   'T'
+026D   2???           00878     call    LCD_char
+026E   3045           00879     movlw   'E'
+026F   2???           00880     call    LCD_char
+0270   3043           00881     movlw   'C'
+0271   2???           00882     call    LCD_char
+0272   3048           00883     movlw   'H'
+0273   2???           00884     call    LCD_char
+0274   3020           00885     movlw   ' '
+0275   2???           00886     call    LCD_char
+0276   3053           00887     movlw   'S'
+0277   2???           00888     call    LCD_char
+0278   304F           00889     movlw   'O'
+0279   2???           00890     call    LCD_char
+027A   304C           00891     movlw   'L'
+027B   2???           00892     call    LCD_char
+027C   3055           00893     movlw   'U'
+027D   2???           00894     call    LCD_char
+027E   3054           00895     movlw   'T'
+027F   2???           00896     call    LCD_char
+0280   3049           00897     movlw   'I'
+0281   2???           00898     call    LCD_char
+0282   304F           00899     movlw   'O'
+0283   2???           00900     call    LCD_char
+0284   304E           00901     movlw   'N'
+0285   2???           00902     call    LCD_char
+0286   3053           00903     movlw   'S'
+0287   2???           00904     call    LCD_char
+0288   30C0           00905     movlw   b'11000000'     ;Goto 2nd row
+0289   2???           00906     call    LCD_Ins
+028A   3030           00907     movlw   '0'
+028B   2???           00908     call    LCD_char
+028C   3038           00909     movlw   '8'
+028D   2???           00910     call    LCD_char
+028E   3031           00911     movlw   '1'
+028F   2???           00912     call    LCD_char
+0290   302D           00913     movlw   '-'
+0291   2???           00914     call    LCD_char
+0292   3032           00915     movlw   '2'
+0293   2???           00916     call    LCD_char
+0294   3032           00917     movlw   '2'
+0295   2???           00918     call    LCD_char
+0296   3032           00919     movlw   '2'
+0297   2???           00920     call    LCD_char
+0298   3037           00921     movlw   '7'
+0299   2???           00922     call    LCD_char
+029A   3032           00923     movlw   '2'
+029B   2???           00924     call    LCD_char
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+029C   3032           00925     movlw   '2'
+029D   2???           00926     call    LCD_char
+029E   3032           00927     movlw   '2'
+029F   2???           00928     call    LCD_char
+                      00929     
+                      00930     
+                      00931     
+02A0   0008           00932     return 
+                      00933 
+                      00934 
+                      00935 
+Warning[205]: Found directive in column 1. (end)
+                      00936 end
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 21
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000006
+ADCS1                             00000007
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+About                             00000039
+Alarm_On                          000000D7
+Attempts_Over                     00000084
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BRGH                              00000002
+C                                 00000000
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000015
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2                             0000001B
+CCPR2H                            0000001C
+CCPR2L                            0000001B
+CHS0                              00000003
+CHS1                              00000004
+CHS2                              00000005
+CKE                               00000006
+CKP                               00000004
+CREN                              00000004
+CSRC                              00000007
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 22
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Check_IncorrectAttempts           00000047
+Check_PwordChange                 000000B5
+Compare_Code                      00000068
+Compared_CorrectPword             0000007D
+Compared_IncorrectPword           00000078
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+D_A                               00000005
+D_NOT_A                           00000005
+Delay                             00000190
+Delay2                            00000195
+Delay5                            0000018C
+DoorAlarm_Init                    000000BB
+Door_Close                        000000C9
+Door_Open                         000000C2
+Door_OpenClose                    00000029
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GCEN                              00000007
+GIE                               00000007
+GO                                00000002
+GO_DONE                           00000002
+GO_NOT_DONE                       00000002
+Get_Pword                         0000004A
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+ISR                               0000001A
+ISR1                              00000020
+ISR_Time                          0000001D
+ISRsleep                          00000022
+KEYPORTA                          00000005
+KEYPORTC                          00000007
+KEYTRISA                          00000085
+KEYTRISC                          00000087
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 23
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Key_Check                         0000015C
+Key_Init                          00000150
+LCDPORT                           00000006
+LCDTRIS                           00000086
+LCDTemp                           00000022
+LCD_Enter                         00000144
+LCD_Init                          00000105
+LCD_Ins                           00000126
+LCD_char                          00000132
+LCD_clear                         00000149
+Main                              00000005
+Menu_Select                       0000000A
+Msg0                              00000198
+Msg1                              000001B3
+Msg2                              000001D0
+Msg3                              000001F1
+Msg4                              00000200
+Msg5                              0000021D
+Msg6                              00000236
+Msg7                              0000024F
+Msg8                              0000026C
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000002
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OERR                              00000001
+OPTION_REG                        00000081
+P                                 00000004
+PCFG0                             00000000
+PCFG1                             00000001
+PCFG2                             00000002
+PCFG3                             00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PORTC                             00000007
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+Password_Check                    00000042
+Pulse_e                           0000013F
+Pword1                            00000030
+PwordCheck                        00000027
+PwordTemp                         00000026
+Pword_Reset                       00000034
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+READ_WRITE                        00000002
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RX9                               00000006
+RX9D                              00000000
+R_NOT_W                           00000002
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+R_W                               00000002
+Read_EEPROM                       000000E4
+Reset_P                           00000087
+S                                 00000003
+SEN                               00000000
+SMP                               00000007
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+SYNC                              00000004
+Store_Pword                       000000A7
+Store_UserCode                    0000005D
+Store_UserCodetoEEPROM            00000095
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 26
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRMT                              00000001
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+Tmr1_Init                         000000D9
+Tmr1_On                           000000E0
+UA                                00000001
+Usercode                          00000040
+W                                 00000000
+WCOL                              00000007
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Write_EEPROM                      000000EF
+Z                                 00000002
+_.org_1_0101                      00000101
+_BODEN_OFF                        00003FBF
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 27
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003EFF
+_CP_ALL                           00000FCF
+_CP_HALF                          00001FDF
+_CP_OFF                           00003FFF
+_CP_UPPER_256                     00002FEF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         000037FF
+_DEVID1                           00002006
+_FOSC_EXTRC                       00003FFF
+_FOSC_HS                          00003FFE
+_FOSC_LP                          00003FFC
+_FOSC_XT                          00003FFD
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_LP_OSC                           00003FFC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_WRT_ENABLE_OFF                   00003DFF
+_WRT_ENABLE_ON                    00003FFF
+_WRT_OFF                          00003DFF
+_WRT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F873A                         00000001
+button_pressed                    00000025
+c1                                00000020
+c2                                00000021
+closedoor                         0000002E
+eead                              00000051
+eeval                             00000050
+loopinCompare                     0000006A
+loopinstore                       0000005F
+reset1                            0000008C
+statusreg                         00000028
+tmrctr                            00000052
+
+MPASM 5.76                         FINAL.ASM   5-8-2018  22:16:45         PAGE 28
+
+
+
+
+
+Errors   :     0
+Warnings :    49 reported,     0 suppressed
+Messages :    23 reported,     0 suppressed
+
+

@@ -1,0 +1,52 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Tue Apr 24 14:12:45 2018
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000174
+                   .cinit    romdata   0x0000ba    program   0x000004
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x0000bb      
+            188 out of 4230 program addresses used, program memory utilization is 4%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    Delay   0x0000b2    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                   Delay2   0x0000b7    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                   Delay5   0x0000af    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                Key_Check   0x00007f    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                 Key_Init   0x000071    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                 LCD_Init   0x000033    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                  LCD_Ins   0x000053    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                 LCD_char   0x00005f    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                     Main   0x000001    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                  Pulse_e   0x00006c    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                        l   0x00002e    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     Main   0x000001    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                        l   0x00002e    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                 LCD_Init   0x000033    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                  LCD_Ins   0x000053    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                 LCD_char   0x00005f    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                  Pulse_e   0x00006c    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                 Key_Init   0x000071    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                Key_Check   0x00007f    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                   Delay5   0x0000af    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                    Delay   0x0000b2    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+                   Delay2   0x0000b7    program     static C:\Users\Ghost\Desktop\Project\codes\Servo.X\servo1.asm
+
+
