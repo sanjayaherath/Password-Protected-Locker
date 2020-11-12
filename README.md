@@ -6,7 +6,7 @@ This was developed for third year first semester project for the course EE322-Em
 
 **Group Members:** [Sanjaya Herath](https://sanjayaherath.github.io/), Madri Madawala, and Ishara Madushan.
 
-**Supervised by:** [Dr. Janaka Wijayakulasooriya](http://eng.pdn.ac.lk/deee/staff/academic/dr.j.wijayakulasooriya/profile.php), [Dr. Ruwan Ranaweera](http://eng.pdn.ac.lk/pages/departmentHome/EE/otherpages/staff/rdbranaweera.html), and [Dr. Uditha Navaratne](http://eng.pdn.ac.lk/deee/staff/academic/mr.us.navaratne/profile.php)
+**Supervised by:** [Dr. Uditha Navaratne](http://eng.pdn.ac.lk/deee/staff/academic/mr.us.navaratne/profile.php) and [Dr. Nalin Harischandra](http://eng.pdn.ac.lk/deee/staff/academic/dr.wani.harischandra/profile.php)
 
 ## Project Overview ##
 
