@@ -2,7 +2,7 @@
 
 ## Introduction ##
 
-This is the project developed for third year first semester project for the courses EE322-Embedded Systems. A prototype password protected locker was developed from PIC assembly from scratch.
+This was developed for third year first semester project for the course EE322-Embedded Systems. A prototype password protected locker was developed from PIC assembly from scratch.
 
 **Group Members:** [Sanjaya Herath](https://sanjayaherath.github.io/), Madri Madawala, and Ishara Madushan.
 
